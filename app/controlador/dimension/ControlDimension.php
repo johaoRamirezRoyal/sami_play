@@ -2,6 +2,10 @@
 date_default_timezone_set('America/Bogota');
 require_once MODELO_PATH . 'dimension' . DS . 'ModeloDimension.php';
 require_once CONTROL_PATH . 'numeros.php';
+require_once LIB_PATH . 'PhpSpreadsheet' . DS . 'vendor' . DS . 'autoload.php';
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class ControlDimension
 {
@@ -191,6 +195,16 @@ class ControlDimension
         return $mostrar;
     }
 
+    public function obtenerIndicadoresDimensionesGrupoCursoPeriodoControl($id_grupo, $id_periodo)
+    {
+        return ModeloDimension::obtenerIndicadoresDimensionesGrupoCursoPeriodoModel($id_grupo, $id_periodo);
+    }
+
+    public function indicadorEnConfiguracionControl($id_indicador, $id_grupo, $id_periodo)
+    {
+        return ModeloDimension::indicadorEnConfiguracionModel($id_indicador, $id_grupo, $id_periodo);
+    }
+
     public function buscarIndicadoresControl($datos)
     {
         $dimension = (!empty($datos['dimension'])) ? ' AND dm.id = ' . $datos['dimension'] : '';
@@ -247,7 +261,79 @@ class ControlDimension
                 </script>
                 ';
             }
+        }
+    }
 
+    public function importarIndicadoresExcelControl()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['subir_csv'])) {
+            echo 'entro al if del POST y del REQUEST';
+            if (isset($_FILES['archivo_excel']) && $_FILES['archivo_excel']['error'] === 0) {
+                echo 'Entro el if del archivo excel';
+
+                $ruta_temporal = $_FILES['archivo_excel']['tmp_name'];
+
+                try {
+                    $documento = IOFactory::load($ruta_temporal);
+
+                    $hoja = $documento->getActiveSheet();
+
+                    $filas = $hoja->toArray(null, true, true, true);
+                    $encabezados = array_shift($filas);
+
+                    $datos = array();
+
+                    //Recorrer filas y combinar con los encabezados
+                    foreach ($filas as $fila) {
+                        $datos[] = array_combine($encabezados, $fila);
+                    }
+
+                    foreach ($datos as $dato) {
+                        $nombre_indicador = $dato['indicador'];
+
+                        $datos = array(
+                            'id_log'       => $_POST['id_log'],
+                            'nombre'       => $nombre_indicador,
+                            'id_dimension' => $_POST['dimension'],
+                            'grupo'        => $_POST['grupo'],
+                            'periodo'      => $_POST['periodo_actual'],
+                        );
+
+                        $guardar = ModeloDimension::agregarIndicadorPeriodoModel($datos);
+
+                        if ($guardar != true) {
+                            echo 'No se pudo agregar el indicador con nombre: ' . $nombre_indicador . '. Se cancelaron las integraciones de los siguientes indicadores.';
+                            return;
+                        }
+                    }
+
+                    if ($guardar == true) {
+                        echo '
+                                <script>
+                                    ohSnap("Se guardaron los indicadores correctamente!", {color: "green", "duration": "1000"});
+                                    setTimeout(recargarPagina,1050);
+                                    function recargarPagina(){
+                                        window.location.replace("index");
+                                    }
+                                </script>
+                                ';
+                    } else {
+                        echo '
+                                <script>
+                                ohSnap("Error al guardar los indicadores.", {color: "red"});
+                                </script>
+                                ';
+                    }
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                }
+            } else {
+                echo '
+                    <script>
+                    ohSnap("Error al subir el archivo de los indicadores.", {color: "red"});
+                    </script>
+                    ';
+            }
         }
     }
 

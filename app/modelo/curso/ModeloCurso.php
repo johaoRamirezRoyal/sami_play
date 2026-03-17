@@ -23,6 +23,38 @@ class ModeloCurso extends conexion
         $cnx = null;
     }
 
+    public static function obtenerCursosDeGrupoCursoModel($id_grupo){
+        $tabla = "curso";
+        $cnx = conexion::singleton_conexion();
+        $cmdsql = "SELECT * FROM $tabla WHERE curso_grupo = $id_grupo AND activo = 1;";
+        try {
+            $preparado = $cnx->preparar($cmdsql);
+            if ($preparado->execute()) {
+                return $preparado->fetchAll(PDO::FETCH_ASSOC);
+            }else{
+                return false;
+            }
+        }catch(PDOException $e){
+            print "Error en el curso!: ". $e->getMessage();
+        }
+    }
+
+    public static function mostrarGruposCursosModel() {
+        $tabla = "curso_grupo";
+        $cnx = conexion::singleton_conexion();
+        $cmdsql = "SELECT * FROM $tabla WHERE activo = 1";
+        try {
+            $preparado = $cnx->preparar($cmdsql);
+            if($preparado->execute()) {
+                return $preparado->fetchAll(PDO::FETCH_ASSOC);
+            }else{
+                return false;
+            }
+        }catch(PDOException $e){
+            print "Error al obtener los grupos de los cursos: " . $e->getMessage();
+        }
+    }
+
     public static function editarCursoModel($datos)
     {
         $tabla  = 'curso';
@@ -222,6 +254,26 @@ class ModeloCurso extends conexion
         $cnx = null;
     }
 
+    public static function eliminarIndicadoresConfiguracionModel($id_curso, $id_periodo){
+        $tabla = "curso_configuracion";
+        $cnx = conexion::singleton_conexion();
+        $cmdsql = "DELETE FROM $tabla 
+                    WHERE id_curso = $id_curso 
+                    AND id_periodo = $id_periodo;";
+        try{
+            $preparado = $cnx->preparar($cmdsql);
+            if($preparado->execute()){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (PDOException $e) {
+            print "Error al eliminar los indicadores: ". $e->getMessage();
+        }
+        $cnx->closed();
+        $cnx = null;
+    }
+
     public static function configuracionCursoModel($datos)
     {
         $tabla  = 'curso_configuracion';
@@ -253,6 +305,27 @@ class ModeloCurso extends conexion
         }
         $cnx->closed();
         $cnx = null;
+    }
+
+    public static function actualizarEstadoDeIndicadoresModel($datos){
+        $tabla = 'curso_configuracion';
+        $cnx = conexion::singleton_conexion();
+        $cmdsql = "UPDATE $tabla SET activo = :activo WHERE id_indicador = :id_indicador AND id_periodo = :id_periodo AND id_curso = :id_curso";
+        try {
+            $preparado = $cnx->preparar($cmdsql);
+            $preparado->bindParam(':activo', $datos['activo']);
+            $preparado->bindParam(':id_indicador', $datos['id_indicador']);
+            $preparado->bindParam(':id_periodo', $datos['id_periodo']);
+            $preparado->bindParam(':id_curso', $datos['id_curso']);
+
+            if($preparado->execute()){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (PDOException $e) {
+            print 'Error al actualizar el estado del indicador: '. $e->getMessage();
+        }
     }
 
     public static function mostrarPeriodoCursoModel($id)
@@ -293,6 +366,46 @@ class ModeloCurso extends conexion
         $cnx = null;
     }
 
+    public static function mostrarDimensionesIndicadoresInformacionModel($id_periodo, $id_curso){
+        $tabla = "curso_configuracion";
+        $cnx = conexion::singleton_conexion();
+        $cmdsql = "SELECT 
+                    cc.*, 
+                    d.nombre as nombre_dimension, 
+                    d.id as id_dimension,
+                    i.id as id_indicador, 
+                    i.nombre as nombre_indicador,
+                    c.nombre as nombre_curso,
+                    c.id as id_curso,
+                    p.numero as numero_periodo,
+                    concat(p.fecha_inicio, ' / ', p.fecha_fin) as fecha_periodo,
+                    p.id as id_periodo
+                    FROM $tabla cc
+                    LEFT JOIN dimensiones d ON cc.id_dimension = d.id 
+                    LEFT JOIN indicador i ON i.id = cc.id_indicador
+                    LEFT JOIN curso c ON c.id = cc.id_curso 
+                    LEFT JOIN periodos p ON p.id = cc.id_periodo
+                    WHERE p.id = :id_periodo 
+                    AND c.id = :id_curso 
+                    ORDER BY d.id DESC;";
+        try{
+            $preparado = $cnx->preparar($cmdsql);
+            $preparado->bindParam(':id_periodo', $id_periodo, PDO::PARAM_INT);
+            $preparado->bindParam(':id_curso', $id_curso, PDO::PARAM_INT);
+
+            if($preparado->execute()){
+                return $preparado->fetchAll(PDO::FETCH_ASSOC);
+            }else{
+                return false;
+            }
+        }catch(PDOException $e){
+            print 'Error al obtener los indicadores: '. $e->getMessage();
+        }
+        
+        $cnx->closed();
+        $cnx = null;
+    }
+
     public static function mostrarIndicadoresCursoPeriodoModel($id_curso, $periodo, $dimension)
     {
         $tabla  = 'curso_configuracion';
@@ -316,6 +429,31 @@ class ModeloCurso extends conexion
             }
         } catch (PDOException $e) {
             print "Error!: " . $e->getMessage();
+        }
+        $cnx->closed();
+        $cnx = null;
+    }
+
+    public static function agregarIndicadoresConfiguracionCursoModelo($datos){
+        $tabla = 'curso_configuracion';
+        $cnx = conexion::singleton_conexion();
+        $cmdsql = "INSERT INTO $tabla (id_curso, id_periodo, id_dimension, id_indicador, id_log, activo) VALUES (:id_curso, :id_periodo, :id_dimension, :id_indicador, :id_log, :activo);";
+
+        try{
+            $preparado = $cnx->preparar($cmdsql);
+            $preparado->bindParam(":id_curso", $datos['id_curso'], PDO::PARAM_INT);
+            $preparado->bindParam(":id_periodo", $datos['id_periodo'], PDO::PARAM_INT);
+            $preparado->bindParam(":id_dimension", $datos['id_dimension'], PDO::PARAM_INT);
+            $preparado->bindParam(":id_indicador", $datos['id_indicador'], PDO::PARAM_INT);
+            $preparado->bindParam(":id_log", $datos['id_log'], PDO::PARAM_INT);
+            $preparado->bindParam(":activo", $datos['activo'], PDO::PARAM_INT);
+            if($preparado->execute()){
+                return true;
+            }else{
+                return false;
+            }
+        }catch(PDOException $e){
+            print 'Error al insertar los indicadores: ' . $e->getMessage();
         }
         $cnx->closed();
         $cnx = null;

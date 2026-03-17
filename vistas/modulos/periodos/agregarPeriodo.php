@@ -11,7 +11,7 @@
                     <div class="row  p-3">
                         <div class="col-lg-6 form-group">
                             <label class="font-weight-bold">Periodo No. <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control numeros" name="numero" required>
+                            <input type="text" class="form-control" name="numero" required>
                         </div>
                         <div class="col-lg-6 form-group">
                             <label class="font-weight-bold">A&ntilde;o Escolar <span class="text-danger">*</span></label>

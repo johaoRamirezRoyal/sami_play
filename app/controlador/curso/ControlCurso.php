@@ -28,6 +28,11 @@ class ControlCurso
         return $mostrar;
     }
 
+    public function mostrarGruposCursosControl()
+    {
+        return ModeloCurso::mostrarGruposCursosModel();
+    }
+
     public function mostrarDatosCursoProfesorControl($id)
     {
         $mostrar = ModeloCurso::mostrarDatosCursoProfesorModel($id);
@@ -38,6 +43,11 @@ class ControlCurso
     {
         $mostrar = ModeloCurso::mostrarPeriodosConfiguradosCursoModel($id);
         return $mostrar;
+    }
+
+    public function obtenerCursosDeGrupoCursoControl($id_grupo)
+    {
+        return ModeloCurso::obtenerCursosDeGrupoCursoModel($id_grupo);
     }
 
     public function mostrarPeriodosCursoControl($id)
@@ -62,6 +72,11 @@ class ControlCurso
     {
         $mostrar = ModeloCurso::mostrarIndicadorMarcadoCursoModel($id_curso, $indicador);
         return $mostrar;
+    }
+
+    public function mostrarDimensionesIndicadoresInformacionControl($id_periodo, $id_curso)
+    {
+        return ModeloCurso::mostrarDimensionesIndicadoresInformacionModel($id_periodo, $id_curso);
     }
 
     public function mostrarIndicadoresCursoPeriodoControl($id_curso, $periodo, $dimension)
@@ -142,7 +157,6 @@ class ControlCurso
                 </script>
                 ';
             }
-
         }
     }
 
@@ -156,9 +170,15 @@ class ControlCurso
 
             if (!empty($_POST['indicador'])) {
 
-                $eliminar_indicadores = ModeloCurso::inactivarIndicadoresCursoModel($_POST['id_curso']);
+                $desactivar_indicadores = ModeloCurso::inactivarIndicadoresCursoModel($_POST['id_curso']);
 
-                if ($eliminar_indicadores == true) {
+                if ($desactivar_indicadores == false) {
+                    echo 'No se pudo hacer la desactivación de los indicadores';
+                }
+
+                //$eliminar_indicadores = ModeloCurso::eliminarIndicadoresConfiguracionModel($_POST['id_curso'], $_POST['periodo']);
+
+                if ($desactivar_indicadores == true) {
 
                     $array_indicador = array();
                     $array_indicador = $_POST['indicador'];
@@ -176,9 +196,14 @@ class ControlCurso
                             'id_dimension' => $array_dimension[1],
                             'id_periodo'   => $_POST['periodo'],
                             'id_indicador' => $array_dimension[0],
+                            'activo'       => 1
                         );
 
-                        $guardar = ModeloCurso::configuracionCursoModel($datos);
+                        $guardar = ModeloCurso::actualizarEstadoDeIndicadoresModel($datos);
+                        if ($guardar == false) {
+                            echo 'No se pudo actualizar el estado del indicador con ID: ' . $datos['id_indicador'] .'!';
+                            return;
+                        }
                     }
 
                     if ($guardar == true) {
@@ -199,15 +224,78 @@ class ControlCurso
                         </script>
                         ';
                     }
-
                 }
-
             } else {
                 echo '
                 <script>
                 ohSnap("Seleccione al menos 1 indicador!", {color: "red"});
                 </script>
                 ';
+            }
+        }
+    }
+
+    public function agregarIndicadoresConfiguracionCursoControl()
+    {
+        if (isset($_POST['generar'])) {
+
+            if (empty($_POST['indicador'])) {
+                echo "Debe seleccionar al menos un indicador";
+                return;
+            }
+
+            $grupo_curso = $_POST['grupo_curso'];
+            $id_periodo = $_POST['id_periodo'];
+            $id_log = $_POST['id_log'];
+            $activo = $_POST['activo'];
+            $indicadores = $_POST['indicador']; // Array con indicadores y dimensiones!
+
+            $cursos = ModeloCurso::obtenerCursosDeGrupoCursoModel($grupo_curso);
+
+            if ($cursos == 0) {
+                echo "No hay cursos disponibles";
+                return;
+            }
+
+            foreach ($cursos as $curso) {
+                $id_curso = $curso['id'];
+                $eliminar_registros = ModeloCurso::eliminarIndicadoresConfiguracionModel($id_curso, $id_periodo);
+
+                if ($eliminar_registros == false) {
+                    echo 'No se pudieron eliminar los registros existentes';
+                    return;
+                }
+
+                foreach ($indicadores as $valor) {
+                    list($id_indicador, $id_dimension) = explode(',', $valor);
+
+                    $datos = array(
+                        'id_curso' => $id_curso,
+                        'id_periodo' => $id_periodo,
+                        'id_dimension' => $id_dimension,
+                        'id_indicador' => $id_indicador,
+                        'id_log' => $id_log,
+                        'activo' => $activo
+                    );
+
+                    $generar = ModeloCurso::agregarIndicadoresConfiguracionCursoModelo($datos);
+
+                    if ($generar == false) {
+                        echo json_encode(array('error' => 'Error al agregar el indicador', 'datos' => $datos));
+                        return;
+                    }
+                }
+
+                echo '
+                        <script>
+                            ohSnap("Guardado correctamente!", {color: "green", "duration": "1000"});
+                            setTimeout(recargarPagina,1050);
+
+                            function recargarPagina(){
+                                window.location.replace("administrar");
+                            }
+                        </script>
+                        ';
             }
         }
     }

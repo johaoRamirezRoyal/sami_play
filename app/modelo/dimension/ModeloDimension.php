@@ -224,6 +224,30 @@ class ModeloDimension extends conexion
         $cnx = null;
     }
 
+    public static function agregarIndicadorPeriodoModel($datos)
+    {
+        $tabla  = 'indicador';
+        $cnx    = conexion::singleton_conexion();
+        $cmdsql = "INSERT INTO $tabla (nombre, id_dimension, id_log, id_periodo, curso_grupo) VALUES (:nombre, :id_dimension, :id_log, :id_periodo, :curso_grupo);";
+        try {
+            $preparado = $cnx->preparar($cmdsql);
+            $preparado->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
+            $preparado->bindParam(":id_dimension", $datos["id_dimension"], PDO::PARAM_INT);
+            $preparado->bindParam(":id_log", $datos["id_log"], PDO::PARAM_INT);
+            $preparado->bindParam(":id_periodo", $datos["periodo"], PDO::PARAM_INT);
+            $preparado->bindParam(":curso_grupo", $datos["grupo"], PDO::PARAM_STR);
+            if ($preparado->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            print "Error!: " . $e->getMessage();
+        }
+        $cnx->closed();
+        $cnx = null;
+    }
+
     public static function mostrarLimiteIndicadorModel()
     {
         $tabla  = 'indicador';
@@ -301,6 +325,55 @@ class ModeloDimension extends conexion
         }
         $cnx->closed();
         $cnx = null;
+    }
+
+    
+    public static function obtenerIndicadoresDimensionesGrupoCursoPeriodoModel($id_grupo, $id_periodo){
+        $tabla = "indicador";
+        $cnx = conexion::singleton_conexion();
+        $cmdsql = "SELECT i.*, d.id AS dimension_id, d.nombre AS dimension_nombre 
+                    FROM $tabla i
+                    LEFT JOIN dimensiones d ON i.id_dimension = d.id
+                    WHERE i.ID_PERIODO = $id_periodo AND i.CURSO_GRUPO = $id_grupo";
+        try {
+            $preparado = $cnx->preparar($cmdsql);
+            if($preparado->execute()){
+                return $preparado->fetchAll(PDO::FETCH_ASSOC);
+            }else{
+                return false;
+            }
+        }catch(PDOException $e){
+            print "Error al obtener los indicadores en el periodo y grupo: " . $e->getMessage();
+        }
+    }
+
+    public static function indicadorEnConfiguracionModel($id_indicador, $id_grupo, $id_periodo){
+        $tabla = "curso_configuracion";
+        $cnx = conexion::singleton_conexion();
+        $cmdsql = "SELECT 
+                    COUNT(DISTINCT cc.id_curso) = 
+                    (
+                        SELECT COUNT(*) 
+                        FROM curso 
+                        WHERE curso_grupo = $id_grupo
+                        AND activo = 1
+                    ) AS indicador_en_todos
+                    FROM $tabla cc
+                    JOIN curso c ON c.id = cc.id_curso
+                    JOIN periodos p ON cc.id_periodo = p.id
+                    WHERE cc.id_indicador = $id_indicador AND cc.id_periodo = $id_periodo
+                    AND c.curso_grupo = $id_grupo;";
+
+        try{
+            $preparado = $cnx->preparar($cmdsql);
+            if($preparado->execute()){
+                return $preparado->fetchColumn();
+            }else{
+                return false;
+            }
+        }catch(PDOException $e){
+            print "Error buscando el indicador: " . $e->getMessage();
+        }
     }
 
     public static function editarIndicadorModel($datos)

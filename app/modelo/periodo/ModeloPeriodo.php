@@ -32,11 +32,14 @@ class ModeloPeriodo extends conexion
     {
         $tabla  = 'periodos';
         $cnx    = conexion::singleton_conexion();
-        $cmdsql = "SELECT * FROM " . $tabla . " WHERE activo = 1;";
+        $cmdsql = "SELECT p.*, ae.anio
+                     FROM $tabla p
+                     LEFT JOIN anio_escolar ae ON p.id_anio = ae.id
+                     WHERE p.activo = 1;";
         try {
             $preparado = $cnx->preparar($cmdsql);
             if ($preparado->execute()) {
-                return $preparado->fetchAll();
+                return $preparado->fetchAll(PDO::FETCH_ASSOC);
             } else {
                 return false;
             }

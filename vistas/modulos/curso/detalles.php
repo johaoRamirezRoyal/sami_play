@@ -41,18 +41,31 @@ if (isset($_GET['codigo'])) {
 
 	$periodo_configuracion = $instancia->mostrarPeriodoCursoControl($id_curso);
 
-	?>
+	$datos_general_indicadores = $instancia->mostrarDimensionesIndicadoresInformacionControl($datos_curso['periodo_actual'], $id_curso);
+
+	$indicadores_por_dimension = [];
+
+	foreach ($datos_general_indicadores as $item) {
+		$id_dimension = $item['id_dimension'];
+
+		$indicadores_por_dimension[$id_dimension]['nombre_dimension'] = $item['nombre_dimension'];
+		$indicadores_por_dimension[$id_dimension]['indicadores'][] = $item;
+	}
+
+	//var_dump($datos_curso['periodo_actual']);
+
+?>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="card shadow-sm mb-4">
 					<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
 						<h4 class="m-0 font-weight-bold text-play">
-							<a href="<?=BASE_URL?>curso/index" class="text-decoration-none text-play">
+							<a href="<?= BASE_URL ?>curso/index" class="text-decoration-none text-play">
 								<i class="fa fa-arrow-left"></i>
 							</a>
 							&nbsp;
-							Curso  - <?=$datos_curso['nombre']?>
+							Curso - <?= $datos_curso['nombre'] ?>
 						</h4>
 					</div>
 					<div class="card-body">
@@ -75,12 +88,12 @@ if (isset($_GET['codigo'])) {
 									<!--------------------------->
 									<div class="tab-pane fade show active" id="informacion" role="tabpanel" aria-labelledby="profile-tab">
 										<form method="POST">
-											<input type="hidden" name="id_log" value="<?=$id_log?>">
-											<input type="hidden" name="id_curso" value="<?=$id_curso?>">
+											<input type="hidden" name="id_log" value="<?= $id_log ?>">
+											<input type="hidden" name="id_curso" value="<?= $id_curso ?>">
 											<div class="row mt-4 p-2">
 												<div class="col-lg-4 form-group">
 													<label class="font-weight-bold">Nombre <span class="text-danger">*</span></label>
-													<input type="text" class="form-control" name="nom_curso" value="<?=$datos_curso['nombre']?>" required>
+													<input type="text" class="form-control" name="nom_curso" value="<?= $datos_curso['nombre'] ?>" required>
 												</div>
 												<div class="col-lg-4 form-group">
 													<label class="font-weight-bold">Director de grupo <span class="text-danger">*</span></label>
@@ -94,9 +107,9 @@ if (isset($_GET['codigo'])) {
 															$selected_profesor = ($id_user == $datos_curso['id_profesor']) ? 'selected' : '';
 
 															if ($profesor['perfil'] == 4) {
-																?>
-																<option value="<?=$id_user?>" <?=$selected_profesor?>><?=$nombre_completo?></option>
-																<?php
+														?>
+																<option value="<?= $id_user ?>" <?= $selected_profesor ?>><?= $nombre_completo ?></option>
+														<?php
 															}
 														}
 														?>
@@ -112,14 +125,14 @@ if (isset($_GET['codigo'])) {
 															$nom_periodo = $periodo['numero'] . ' - ' . $periodo['anio'];
 
 															$selected_periodo = ($datos_curso['periodo_actual'] == $id_periodo) ? 'selected' : '';
-															?>
-															<option value="<?=$id_periodo?>" <?=$selected_periodo?>><?=$nom_periodo?></option>
-														<?php }?>
+														?>
+															<option value="<?= $id_periodo ?>" <?= $selected_periodo ?>><?= $nom_periodo ?></option>
+														<?php } ?>
 													</select>
 												</div>
 												<div class="col-lg-4 form-group">
 													<label class="font-weight-bold">Numero de estudiantes</label>
-													<input type="text" class="form-control" disabled value="<?=$datos_curso['cantidad_estudiante']?>">
+													<input type="text" class="form-control" disabled value="<?= $datos_curso['cantidad_estudiante'] ?>">
 												</div>
 												<div class="col-lg-12 form-group text-right mt-2">
 													<button class="btn btn-play btn-sm" type="submit">
@@ -132,18 +145,18 @@ if (isset($_GET['codigo'])) {
 										</form>
 									</div>
 									<!--------------------------->
-									<div class="tab-pane fade"  id="indicador" role="tabpanel" aria-labelledby="home-tab">
+									<div class="tab-pane fade" id="indicador" role="tabpanel" aria-labelledby="home-tab">
 										<form method="POST">
-											<input type="hidden" name="id_log" value="<?=$id_log?>">
-											<input type="hidden" name="id_curso" value="<?=$id_curso?>">
+											<input type="hidden" name="id_log" value="<?= $id_log ?>">
+											<input type="hidden" name="id_curso" value="<?= $id_curso ?>">
 											<div class="row p-2 mt-4">
 												<div class="col-lg-4 form-group">
 													<label class="font-weight-bold">Nombre</label>
-													<input type="text" class="form-control" value="<?=$datos_curso['nombre']?>" disabled>
+													<input type="text" class="form-control" value="<?= $datos_curso['nombre'] ?>" disabled>
 												</div>
 												<div class="col-lg-4 form-group">
 													<label class="font-weight-bold">Codigo Curso</label>
-													<input type="text" class="form-control" value="<?=$datos_curso['id']?>" disabled>
+													<input type="text" class="form-control" value="<?= $datos_curso['id'] ?>" disabled>
 												</div>
 												<div class="col-lg-4 form-group">
 													<label class="font-weight-bold">Periodo Escolar <span class="text-danger">*</span></label>
@@ -155,9 +168,9 @@ if (isset($_GET['codigo'])) {
 															$nom_periodo = $periodo['numero'] . ' - ' . $periodo['anio'];
 
 															$selected_periodo = ($periodo_configuracion['id_periodo'] == $id_periodo) ? 'selected' : '';
-															?>
-															<option value="<?=$id_periodo?>" <?=$selected_periodo?>><?=$nom_periodo?></option>
-														<?php }?>
+														?>
+															<option value="<?= $id_periodo ?>" <?= $selected_periodo ?>><?= $nom_periodo ?></option>
+														<?php } ?>
 													</select>
 												</div>
 												<div class="col-lg-12 form-group mt-2 text-right">
@@ -170,44 +183,49 @@ if (isset($_GET['codigo'])) {
 											</div>
 											<div class="table-responsive mt-4">
 												<table class="table table-hover table-sm" width="100%" cellspacing="0">
-													<?php
-													foreach ($datos_dimensiones as $dimension) {
-														$id_dimension  = $dimension['id'];
-														$nom_dimension = $dimension['nombre'];
 
-														$datos_indicadores = $instancia_dimension->mostrarIndicadoresDimensionControl($id_dimension, $datos_curso['curso_grupo']);
-														?>
+													<?php foreach ($indicadores_por_dimension as $dimension): ?>
+
 														<thead>
 															<tr class="text-center font-weight-bold">
-																<th scope="col" colspan="2"><?=$nom_dimension?></th>
+																<th colspan="2"><?= $dimension['nombre_dimension'] ?></th>
 															</tr>
 														</thead>
+
 														<tbody class="border">
-															<?php
-															foreach ($datos_indicadores as $indicador) {
-																$id_indicador           = $indicador['id'];
-																$nom_indicador          = $indicador['nombre'];
-																$id_dimension_indicador = $indicador['id_dimension'];
 
-																$indicador_curso = $instancia->mostrarIndicadorMarcadoCursoControl($id_curso, $id_indicador);
+															<?php foreach ($dimension['indicadores'] as $indicador):
 
-																$selected_indicador = ($indicador_curso['id_indicador'] == $id_indicador) ? 'checked' : '';
+																$id_indicador = $indicador['id_indicador'];
+																$nom_indicador = $indicador['nombre_indicador'];
+																$activo = $indicador['activo'];
 
-																?>
-																<tr class="text-left">
-																	<td><?=$nom_indicador?></td>
+																$checked = ($activo == 1) ? 'checked' : '';
+
+															?>
+
+																<tr>
+																	<td><?= $nom_indicador ?></td>
 																	<td>
 																		<div class="custom-control custom-switch">
-																			<input type="checkbox" class="custom-control-input check" value="<?=$id_indicador?>,<?=$id_dimension?>" name="indicador[]" id="<?=$id_indicador?>" <?=$selected_indicador?>>
-																			<label class="custom-control-label" for="<?=$id_indicador?>"></label>
+																			<input type="checkbox"
+																				class="custom-control-input check"
+																				value="<?= $id_indicador ?>,<?= $indicador['id_dimension'] ?>"
+																				name="indicador[]"
+																				id="indicador<?= $id_indicador ?>"
+																				<?= $checked ?>>
+
+																			<label class="custom-control-label" for="indicador<?= $id_indicador ?>"></label>
 																		</div>
 																	</td>
 																</tr>
-																<?php
-															}
-															?>
+
+															<?php endforeach; ?>
+
 														</tbody>
-													<?php }?>
+
+													<?php endforeach; ?>
+
 												</table>
 											</div>
 											<div class="row">
@@ -241,13 +259,13 @@ if (isset($_GET['codigo'])) {
 														$documento      = $estudiante['documento'];
 														$correo         = $estudiante['correo'];
 														$telefono       = $estudiante['telefono'];
-														?>
+													?>
 														<tr class="text-center">
-															<td><?=$tipo_documento?></td>
-															<td><?=$documento?></td>
-															<td><?=$nom_completo?></td>
+															<td><?= $tipo_documento ?></td>
+															<td><?= $documento ?></td>
+															<td><?= $nom_completo ?></td>
 														</tr>
-													<?php }?>
+													<?php } ?>
 												</tbody>
 											</table>
 										</div>
@@ -260,17 +278,17 @@ if (isset($_GET['codigo'])) {
 			</div>
 		</div>
 	</div>
-</div>
+	</div>
 <?php
-include_once VISTA_PATH . 'script_and_final.php';
+	include_once VISTA_PATH . 'script_and_final.php';
 
-if (isset($_POST['periodo'])) {
-	$instancia->configuracionCursoControl();
-}
+	if (isset($_POST['periodo'])) {
+		$instancia->configuracionCursoControl();
+	}
 
-if (isset($_POST['nom_curso'])) {
-	$instancia->editarCursoControl();
-}
+	if (isset($_POST['nom_curso'])) {
+		$instancia->editarCursoControl();
+	}
 }
 ?>
-<script src="<?=PUBLIC_PATH?>js/boletin/funcionesBoletin.js"></script>
+<script src="<?= PUBLIC_PATH ?>js/boletin/funcionesBoletin.js"></script>
