@@ -218,10 +218,11 @@ class ControlRecursos
                 </ul>
                 </p>
                 ';
+                $correo = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', 'natalia.echeverria@playandlearn.edu.co'];
 
                 $datos_correo = array(
                     'asunto'  => 'Solicitud de certificado(PlayAndLearn)',
-                    'correo'  => array('hernando.ramirez@royalschool.edu.co'), //array('gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', 'steycy.morales@royalschool.edu.co'),
+                    'correo'  => $correo,
                     'user'    => 'Juan Lopez',
                     'mensaje' => $mensaje,
                     'archivo' => array(''),
@@ -415,11 +416,11 @@ class ControlRecursos
                 </ul>
                 </p>
                 ';
+                $correo = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_tramite['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
 
                 $datos_correo = array(
-                    'asunto'  => 'Tramite o servicio (PlayAndLearn)',
-                    //'correo'  => array('jesus.polo@royalschool.edu.co'),
-                    'correo'  => array('hernando.ramirez@royalschool.edu.co'),//array('gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', 'steycy.morales@royalschool.edu.co', $correo_solicitante),
+                    'asunto'  => 'Tramite o servicio (PlayAndLearn)',,
+                    'correo'  => $correo,
                     'mensaje' => $mensaje,
                     'archivo' => array(''),
                 );
@@ -551,11 +552,11 @@ class ControlRecursos
                 </ul>
                 </p>
                 ';
+                $correo = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_tramite['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
 
                 $datos_correo = array(
                     'asunto'  => 'Tramite o servicio - ' . $nom_estado . ' (PlayAndLearn)',
-                    //'correo'  => array('jesus.polo@royalschool.edu.co'),
-                    'correo'  => array('hernando.ramirez@royalschool.edu.co'), //array('gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', 'steycy.morales@royalschool.edu.co', ($correo_solicitante == "") ? $correo_solicitante_sami : $correo_solicitante),
+                    'correo'  => $correo,
                     'mensaje' => $mensaje,
                     'archivo' => $archivos,
                 );
@@ -655,7 +656,7 @@ class ControlRecursos
                 </ul>
                 </p>';
 
-                $correo[] = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
+                $correo = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
 
                 $datos_correo = array(
                     'asunto'  => 'Permiso/Licencia (PlayAndLearn)',
@@ -749,7 +750,7 @@ class ControlRecursos
                 </ul>
                 </p>';
                 
-                $correo[] = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
+                $correo = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
                 $datos_correo = array(
                     'asunto'  => 'Permiso/Licencia - ' . $nom_estado . ' (PlayAndLearn)',
                     'correo' => $correo,
@@ -834,7 +835,7 @@ class ControlRecursos
             
             $mensaje = '<h1>Recordatorio Solicitud de permiso No. '.$datos['id'].' de '.$datos_permiso['nom_user'].' con la fecha de '.$datos_permiso['fecha_permiso'].'. </h1>';
             $mensaje .= '<p>Este recordatorio es para notificarle que su solicitud se encuentra pendiente de aprobación debido a la falta de entrega de la evidencia de permiso. <b>Por favor, adjunte un documento que evidencie de manera pertinente su solicitud </p> </p>';
-            $correo[] = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
+            $correo = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
 
             $datos_correo = array(
                 'asunto'  => 'Permiso/Licencia - Solicitud No. '. $datos['id'] . ' (PlayAndLearn)',
@@ -842,9 +843,9 @@ class ControlRecursos
                 'mensaje' => $mensaje,
                 'archivo' => array(''),
             );
-            var_dump($datos_correo);
-            die();
             $envio = Correo::enviarCorreoModel($datos_correo);
+
+            var_dump($envio);
         }
     }
 
