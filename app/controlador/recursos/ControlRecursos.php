@@ -759,6 +759,24 @@ class ControlRecursos
                 );
 
                 $envio = Correo::enviarCorreoModel($datos_correo);
+                if ($envio) {
+                    echo '
+                        <script>
+                        ohSnap("Actualizado correctamente!", {color: "green", "duration": "1000"});
+                        setTimeout(recargarPagina,1050);
+
+                        function recargarPagina(){
+                            window.location.replace("detalles?id=' . base64_encode($datos['id_permiso']) . '&enlace=' . base64_encode(0) . '");
+                        }
+                        </script>
+                        ';
+                } else {
+                    echo '
+                        <script>
+                        ohSnap("Error al enviar recordatorio", {color: "red"});
+                        </script>
+                        ';
+                }
 
             } else {
                 echo '
@@ -844,8 +862,24 @@ class ControlRecursos
                 'archivo' => array(''),
             );
             $envio = Correo::enviarCorreoModel($datos_correo);
+            if($envio){
+                echo '
+                        <script>
+                        ohSnap("Actualizado correctamente!", {color: "green", "duration": "1000"});
+                        setTimeout(recargarPagina,1050);
 
-            var_dump($envio);
+                        function recargarPagina(){
+                            window.location.replace("detalles?id=' . base64_encode($datos['id_permiso']) . '&enlace=' . base64_encode(0) . '");
+                        }
+                        </script>
+                        ';
+            }else {
+                echo '
+                        <script>
+                        ohSnap("Error al enviar recordatorio", {color: "red"});
+                        </script>
+                        ';
+            }
         }
     }
 
