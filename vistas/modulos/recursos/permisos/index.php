@@ -34,7 +34,7 @@ require_once CONTROL_PATH . 'recursos' . DS . 'ControlRecursos.php';
 
 $instancia = ControlRecursos::singleton_recursos();
 
-
+var_dump($id_log);
 
 $datos_motivos = $instancia->mostrarMotivosPermisoControl();
 

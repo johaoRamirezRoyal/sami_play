@@ -119,7 +119,6 @@ if (!$permisos) {
                 <div class="card-body">
 
                     <form method="POST">
-                        <input type="hidden" name="id_nivel" value="<?= $nivel ?>">
                         <div class="row">
 
                             <div class="col-lg-4 form-group">

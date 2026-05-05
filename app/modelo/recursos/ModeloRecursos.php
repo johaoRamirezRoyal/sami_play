@@ -1289,14 +1289,12 @@ class ModeloRecursos extends conexion
                     u.telefono,
                     u.correo AS correo_user,
                     pt.nombre AS nom_tipo,
-                    u.id_nivel AS nivel_user,
                     pm.nombre AS nom_motivo,
                     -- Subconsulta para obtener el correo del coordinador del mismo nivel
                     (
                         SELECT uc.correo
                         FROM usuarios uc
-                        WHERE uc.id_nivel = u.id_nivel
-                        AND uc.perfil = 26
+                        WHERE uc.perfil = 26
                         LIMIT 1
                     ) AS correo_coordinador
                 FROM permiso p
@@ -1403,7 +1401,7 @@ class ModeloRecursos extends conexion
 
     }
 
-    public static function mostrarPermisosLicenciasUsuarioNivelModel($id){
+    public static function mostrarPermisosLicenciasUsuarioNivelModel(){
         $tabla = 'permiso';
         $cnx = conexion::singleton_conexion();
         $cmdsql = "SELECT
@@ -1418,13 +1416,11 @@ class ModeloRecursos extends conexion
                     LEFT JOIN usuarios u ON u.id_user = p.id_user
                     LEFT JOIN permiso_tipo pt ON pt.id = p.tipo_permiso
                     LEFT JOIN permiso_motivo pm ON pm.id = p.motivo_permiso
-                    WHERE u.id_nivel = :id
-                    AND MONTH(p.fecha_permiso) = MONTH(CURDATE())
+                    WHERE MONTH(p.fecha_permiso) = MONTH(CURDATE())
                     AND YEAR(p.fecha_permiso) = YEAR(CURDATE())
                     ORDER BY p.fecha_permiso;";
         try{
             $preparado = $cnx->preparar($cmdsql);
-            $preparado->bindParam(':id', $id);
             $preparado->setFetchMode(PDO::FETCH_ASSOC);
             if($preparado->execute()){
                 return $preparado->fetchAll();
@@ -1453,14 +1449,13 @@ class ModeloRecursos extends conexion
                     LEFT JOIN usuarios u ON u.id_user = p.id_user
                     LEFT JOIN permiso_tipo pt ON pt.id = p.tipo_permiso
                     LEFT JOIN permiso_motivo pm ON pm.id = p.motivo_permiso
-                    WHERE u.id_nivel = :id 
+                    WHERE u.estado = 'activo' 
                     " . $datos['buscar'] . "
                     " . $datos['usuario'] . "
                     " . $datos['fecha'] . "
                     ORDER BY p.fecha_permiso DESC;";
         try{
             $preparado = $cnx->preparar($cmdsql);
-            $preparado->bindParam(':id', $datos['id_nivel']);
             if($preparado->execute()){
                 return $preparado->fetchAll();
             }else{
@@ -1612,16 +1607,15 @@ class ModeloRecursos extends conexion
 
     }
 
-    public static function mostrarPermisosUsuarioNivelModel($id_nivel){
+    public static function mostrarPermisosUsuarioNivelModel(){
         $tabla = 'tramite';
         $cnx = conexion::singleton_conexion();
         $cmdsql = "SELECT t.*
                     FROM $tabla t
                     LEFT JOIN usuarios u ON u.id_user = t.id_user
-                    WHERE t.tipo_tramite = 6 AND u.id_nivel = :id_nivel";
+                    WHERE t.tipo_tramite = 6";
         try{
             $preparado = $cnx->preparar($cmdsql);
-            $preparado->bindParam(':id_nivel', $id_nivel);
             if($preparado->execute()){
                 return $preparado->fetchAll();
             }else{
@@ -1894,12 +1888,12 @@ class ModeloRecursos extends conexion
         $cnx = null;
     }
 
-    public static function correoAsistenteDeNivel($id_nivel){
+    public static function correoAsistenteDeNivel(){
         $tabla = 'usuarios';
         $cnx = conexion::singleton_conexion();
         $cmdsql = "SELECT u.documento, CONCAT(u.apellido, ' ', u.nombre) AS nom_asistente, u.correo
                     FROM $tabla u 
-                    WHERE u.perfil = 11 AND u.id_nivel = $id_nivel";
+                    WHERE u.perfil = 7";
         try{
             $preparado = $cnx->preparar($cmdsql);
             $preparado->setFetchMode(PDO::FETCH_ASSOC);

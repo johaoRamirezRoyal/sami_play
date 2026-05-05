@@ -24,13 +24,9 @@ class ModeloUsuarios extends conexion
 
         (SELECT p.nombre FROM perfiles p WHERE p.id = u.perfil) AS nom_perfil,
 
-        n.nombre AS nom_nivel,
-
         c.nombre AS nom_curso
 
         FROM usuarios u
-
-        LEFT JOIN nivel n ON n.id = u.id_nivel
 
         LEFT JOIN curso c ON c.id = u.id_curso
 

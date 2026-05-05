@@ -114,8 +114,8 @@ class ControlRecursos
         return $mostrar;
     }
 
-    public function mostrarPermisosLicenciasUsuarioNivelControl($id){
-        $mostrar = ModeloRecursos::mostrarPermisosLicenciasUsuarioNivelModel($id);
+    public function mostrarPermisosLicenciasUsuarioNivelControl(){
+        $mostrar = ModeloRecursos::mostrarPermisosLicenciasUsuarioNivelModel();
         return $mostrar;
     }
 
@@ -655,17 +655,11 @@ class ControlRecursos
                 </ul>
                 </p>';
 
-                $correo_coordinador = $datos_permiso['correo_coordinador'];
-                $informacion_asistente = ModeloRecursos::correoAsistenteDeNivel($datos_permiso['nivel_user']);
-
-                if($correo_coordinador == null && $datos_permiso['nivel_user'] == 1 || $datos_permiso['nivel_user'] == 6){
-                    $correo_coordinador = '';//'correoaminta@royalschool.edu.co';
-                }
+                $correo[] = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
 
                 $datos_correo = array(
                     'asunto'  => 'Permiso/Licencia (PlayAndLearn)',
-                    //'correo'  => array('aprendiz.sistemas@royalschool.edu.co'),
-                    'correo'  => array('hernando.ramirez@royalschool.edu.co'),//array('gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], $informacion_asistente['correo'], $correo_coordinador),
+                    'correo'  => $correo,
                     'mensaje' => $mensaje,
                     'archivo' => array(''),
                 );
@@ -727,7 +721,6 @@ class ControlRecursos
                     ';
 
                 $datos_permiso = ModeloRecursos::mostrarPermisoIdModel($_POST['id_permiso']);
-                $informacion_asistente = ModeloRecursos::correoAsistenteDeNivel($datos_permiso['nivel_user']);
                     
                 $nom_estado = ($datos_permiso['estado'] == 1) ? 'Aprobado' : 'Rechazado';
                 $dias = ($datos_permiso['dias_permiso'] != '') ? $datos_permiso['dias_permiso'] : '';
@@ -755,26 +748,11 @@ class ControlRecursos
                 $mensaje .= '
                 </ul>
                 </p>';
-
-                $correo_coordinador = $datos_permiso['correo_coordinador'];
-                $correo_asistente = $informacion_asistente['correo'];
-
-                if (($correo_coordinador === null || $correo_coordinador === '') && 
-                    ($datos_permiso['nivel_user'] == 1 || $datos_permiso['nivel_user'] == 6)) {
-                    $correo_coordinador = 'aminta.ruiz@royalschool.edu.co';
-                }
-
-
-                // if($correo_coordinador == null && $datos_permiso['nivel_user'] == 1 || $datos_permiso['nivel_user'] == 6){
-
-                //     $correo_coordinador = 'aminta.ruiz@royalschool.edu.co';
-
-                // }
-
+                
+                $correo[] = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
                 $datos_correo = array(
                     'asunto'  => 'Permiso/Licencia - ' . $nom_estado . ' (PlayAndLearn)',
-                    //'correo'  => array('aprendiz.sistemas@royalschool.edu.co'),
-                    'correo'  => array('hernando.ramirez@royalschool.edu.co'),//array('gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], $correo_asistente, $correo_coordinador),
+                    'correo' => $correo,
                     'mensaje' => $mensaje,
                     'archivo' => array(''), 
                 );
@@ -825,8 +803,8 @@ class ControlRecursos
         }
     }
 
-    public function mostrarPermisosUsuarioNivelControl($id_nivel){
-        $mostrar = ModeloRecursos::mostrarPermisosUsuarioNivelModel($id_nivel);
+    public function mostrarPermisosUsuarioNivelControl(){
+        $mostrar = ModeloRecursos::mostrarPermisosUsuarioNivelModel();
         return $mostrar;
     }
 
@@ -856,11 +834,11 @@ class ControlRecursos
             
             $mensaje = '<h1>Recordatorio Solicitud de permiso No. '.$datos['id'].' de '.$datos_permiso['nom_user'].' con la fecha de '.$datos_permiso['fecha_permiso'].'. </h1>';
             $mensaje .= '<p>Este recordatorio es para notificarle que su solicitud se encuentra pendiente de aprobación debido a la falta de entrega de la evidencia de permiso. <b>Por favor, adjunte un documento que evidencie de manera pertinente su solicitud </p> </p>';
+            $correo[] = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
 
             $datos_correo = array(
                 'asunto'  => 'Permiso/Licencia - Solicitud No. '. $datos['id'] . ' (PlayAndLearn)',
-                //'correo'  => array('aprendiz.sistemas@royalschool.edu.co'), //array($datos['correo']),
-                'correo'  => array('hernando.ramirez@royalschool.edu.co'),//array($datos['correo']),
+                'correo'  => $correo,
                 'mensaje' => $mensaje,
                 'archivo' => array(''),
             );
@@ -902,7 +880,6 @@ class ControlRecursos
                     $id = $datos['id_permiso'];
 
                     $datos_permiso = ModeloRecursos::mostrarPermisoIdModel($id);
-                    $informacion_asistente = ModeloRecursos::correoAsistenteDeNivel($datos_permiso['nivel_user']);
                     
                     //Enviar a correo
                     $mensaje = '<h1>Permiso/Licencia actualizado</h1>';
