@@ -842,6 +842,8 @@ class ControlRecursos
                 'mensaje' => $mensaje,
                 'archivo' => array(''),
             );
+            var_dump($datos_correo);
+            die();
             $envio = Correo::enviarCorreoModel($datos_correo);
         }
     }
