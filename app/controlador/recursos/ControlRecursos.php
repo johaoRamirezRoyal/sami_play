@@ -419,7 +419,7 @@ class ControlRecursos
                 $correo = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_tramite['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
 
                 $datos_correo = array(
-                    'asunto'  => 'Tramite o servicio (PlayAndLearn)',,
+                    'asunto'  => 'Tramite o servicio (PlayAndLearn)',
                     'correo'  => $correo,
                     'mensaje' => $mensaje,
                     'archivo' => array(''),
