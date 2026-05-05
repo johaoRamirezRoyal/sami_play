@@ -935,9 +935,10 @@ class ControlRecursos
                     $mensaje .= '<li><span style="font-weight: bold;">Detalle del permiso: </span>'.$datos_permiso['nom_motivo'].'</li>';
                     $mensaje .= '</ul>';
 
+                    $correo = ['gestionhumana@royalschool.edu.co', 'gestor.administrativo@royalschool.edu.co', $datos_permiso['correo_user'], 'natalia.echeverria@playandlearn.edu.co'];
                     $datos_correo = array(
                         'asunto'  => 'Permiso/Licencia - Solicitud No. '. $datos['id'] . ' (PlayAndLearn)',
-                        'correo'  => array('hernando.ramirez@royalschool.edu.co'),//array($datos_permiso['correo_user'], $datos_permiso['correo_coordinador'], $informacion_asistente['correo']),
+                        'correo'  => $correo,
                         'mensaje' => $mensaje,
                         'archivo' => array(''),
                     );
