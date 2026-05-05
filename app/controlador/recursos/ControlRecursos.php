@@ -766,7 +766,7 @@ class ControlRecursos
                         setTimeout(recargarPagina,1050);
 
                         function recargarPagina(){
-                            window.location.replace("detalles?id=' . base64_encode($datos['id_permiso']) . '&enlace=' . base64_encode(0) . '");
+                            window.location.replace("listado");
                         }
                         </script>
                         ';
@@ -869,7 +869,7 @@ class ControlRecursos
                         setTimeout(recargarPagina,1050);
 
                         function recargarPagina(){
-                            window.location.replace("detalles?id=' . base64_encode($datos['id_permiso']) . '&enlace=' . base64_encode(0) . '");
+                            window.location.replace("listado");
                         }
                         </script>
                         ';
