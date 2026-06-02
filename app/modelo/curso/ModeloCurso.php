@@ -387,7 +387,7 @@ class ModeloCurso extends conexion
                     LEFT JOIN periodos p ON p.id = cc.id_periodo
                     WHERE p.id = :id_periodo 
                     AND c.id = :id_curso 
-                    ORDER BY d.id DESC;";
+                    ORDER BY d.id DESC , i.nombre ASC;";
         try{
             $preparado = $cnx->preparar($cmdsql);
             $preparado->bindParam(':id_periodo', $id_periodo, PDO::PARAM_INT);
