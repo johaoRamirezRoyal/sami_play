@@ -187,7 +187,7 @@ class ControlUsuarios
 
 
 
-            $pass           = Hash::hashpass('123456789');
+            $pass           = Hash::hashpass($_POST['documento']);
 
             $nombre_archivo = '';
 
