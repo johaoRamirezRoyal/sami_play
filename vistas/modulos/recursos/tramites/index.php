@@ -40,7 +40,7 @@ $datos_tramite = $instancia->mostrarTramitesControl();
 
 
 
-$permisos = $instancia_permiso->permisosUsuarioControlTramites($perfil_log, 76);
+$permisos = $instancia_permiso->permisosUsuarioControlTramites($perfil_log, 24);
 
 if (!$permisos) {
 
