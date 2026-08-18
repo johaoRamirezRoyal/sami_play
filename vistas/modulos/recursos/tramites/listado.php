@@ -46,7 +46,7 @@ $datos_usuario = $instancia_usuario->mostrarTodosUsuariosInventarioControl();
 
 
 
-$permisos = $instancia_permiso->permisosUsuarioControlTramites($perfil_log, 24);
+$permisos = $instancia_permiso->permisosUsuarioControlTramites(24, $perfil_log);
 
 if (!$permisos) {
 

@@ -36,7 +36,7 @@ $instancia = ControlRecursos::singleton_recursos();
 
 
 
-$permisos = $instancia_permiso->permisosUsuarioControlTramites($perfil_log, 25);
+$permisos = $instancia_permiso->permisosUsuarioControlTramites(25, $perfil_log);
 
 if (!$permisos) {
 
