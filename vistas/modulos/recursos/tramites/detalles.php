@@ -584,7 +584,7 @@ if (isset($_GET['id'])) {
 
                             }
 
-                            $permisos = $instancia_permiso->permisosUsuarioControl(79, $perfil_log);
+                            $permisos = $instancia_permiso->permisosUsuarioControlTramites(79, $perfil_log);
 
                             if ($datos_tramite['estado'] == 0 && $permisos) {
 
