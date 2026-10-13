@@ -36,7 +36,14 @@ $instancia = ControlRecursos::singleton_recursos();
 
 
 
-$permisos = $instancia_permiso->permisosUsuarioControlTramites(77, $perfil_log);
+$id_tramite    = isset($_GET['id']) ? base64_decode($_GET['id']) : null;
+
+$datos_tramite = $id_tramite ? $instancia->mostrarDetallesTramiteControl($id_tramite) : false;
+
+// 77: gestiona todos los tramites. 78: solo puede ver los suyos.
+$permisos = $instancia_permiso->permisosUsuarioControlTramites(77, $perfil_log)
+    || ($instancia_permiso->permisosUsuarioControlTramites(78, $perfil_log)
+        && $datos_tramite && $datos_tramite['id_user'] == $id_log);
 
 if (!$permisos) {
 
@@ -52,17 +59,11 @@ if (isset($_GET['id'])) {
 
 
 
-    $id_tramite = base64_decode($_GET['id']);
-
     $url        = base64_decode($_GET['enlace']);
 
 
 
     $enlace = ($url == 0) ? 'listado' : 'misTramites';
-
-
-
-    $datos_tramite        = $instancia->mostrarDetallesTramiteControl($id_tramite);
 
     $datos_documentos     = $instancia->mostrarDocumentosTramiteControl($id_tramite);
 
@@ -258,7 +259,9 @@ if (isset($_GET['id'])) {
 
                                 <?php
 
-                                if ($datos_tramite['estado'] == 0) {
+                                $permisos = $instancia_permiso->permisosUsuarioControlTramites(77, $perfil_log);
+
+                                if ($datos_tramite['estado'] == 0 && $permisos) {
 
                                     ?>
 
@@ -708,7 +711,7 @@ include_once VISTA_PATH . 'script_and_final.php';
 
 
 
-if (isset($_POST['id_tramite'])) {
+if (isset($_POST['id_tramite']) && $instancia_permiso->permisosUsuarioControlTramites(77, $perfil_log)) {
 
     $instancia->estadoTramiteControl();
 

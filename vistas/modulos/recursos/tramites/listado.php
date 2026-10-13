@@ -254,7 +254,7 @@ if (!$permisos) {
 
                                             <div class="btn-group">
 
-                                                <a class="btn btn-info btn-sm" href="<?=BASE_URL?>recursos/tramites/detalles?id=<?=base64_encode($id_tramite)?>&enlace=<?=base64_encode(1)?>" data-tooltip="tooltip" title="Ver detalles" data-placement="bottom">
+                                                <a class="btn btn-info btn-sm" href="<?=BASE_URL?>recursos/tramites/detalles?id=<?=base64_encode($id_tramite)?>&enlace=<?=base64_encode(0)?>" data-tooltip="tooltip" title="Ver detalles" data-placement="bottom">
 
                                                     <i class="fa fa-eye"></i>
 
