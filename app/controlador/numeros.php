@@ -842,3 +842,19 @@ function unidad($numuero)
 
 }
 
+
+
+
+function fechaDiasHabiles($date, $dias)
+
+{
+
+    $fecha   = date('Y-m-d', strtotime($date . "+ " . $dias . " days"));
+
+    $dias_no = date('w', strtotime($fecha));
+
+    $fecha   = ($dias_no == 0 || $dias_no == 6) ? fechaDiasHabiles($fecha, 1) : $fecha;
+
+    return $fecha;
+
+}

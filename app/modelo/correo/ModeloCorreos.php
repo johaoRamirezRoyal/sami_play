@@ -46,6 +46,7 @@ class Correo extends PHPMailer
         }
 
         if (!$mail->send()) {
+            error_log('Correo no enviado: ' . $mail->ErrorInfo);
             return false;
         } else {
             return true;
