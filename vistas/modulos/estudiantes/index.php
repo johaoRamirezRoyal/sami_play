@@ -208,8 +208,8 @@ if (!$permisos) {
 																<label class="font-weight-bold">Genero <span class="text-danger">*</span></label>
 																<select name="genero" class="form-control" required>
 																	<?php
-																	$select_genero1 = ($genero == 1) ? 'selected' : '';
-																	$select_genero2 = ($genero == 2) ? 'selected' : '';
+																	$select_genero1 = ($usuario['genero'] == 1) ? 'selected' : '';
+																	$select_genero2 = ($usuario['genero'] == 2) ? 'selected' : '';
 																	?>
 																	<option value="1" <?=$select_genero1?>>Masculino</option>
 																	<option value="2" <?=$select_genero2?>>Femenino</option>

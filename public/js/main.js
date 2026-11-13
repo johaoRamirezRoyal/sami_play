@@ -4,7 +4,10 @@ $(document).ready(function() {
     $('[data-toggle="popover"]').popover();
     $('.clockpicker').clockpicker();
     $(".loader").fadeOut("slow");
-    $("select").select2();
+    $("select").each(function() {
+        var $modal = $(this).closest('.modal');
+        $(this).select2({ dropdownParent: $modal.length ? $modal : $(document.body) });
+    });
     $("table thead").addClass('text-uppercase');
     $("table thead").addClass('text-dark');
     $("table tbody").addClass('text-gray-600');
