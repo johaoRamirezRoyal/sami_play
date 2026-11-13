@@ -10,7 +10,7 @@
   <script src="<?=PUBLIC_PATH?>js/sb-admin-2.min.js"></script>
 
   <!---- scripts creados----->
-  <script src="<?=PUBLIC_PATH?>js/main.js"></script>
+  <script src="<?=PUBLIC_PATH?>js/main.js?v=<?=filemtime(PUBLIC_PATH_ARCH . 'js' . DS . 'main.js')?>"></script>
   <script src="<?=PUBLIC_PATH?>js/clockPicker.js"></script>
   <script src="<?=PUBLIC_PATH?>js/fileinput.js"></script>
   <script src="<?=PUBLIC_PATH?>js/select.js"></script>

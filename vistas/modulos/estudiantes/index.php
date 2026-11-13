@@ -95,6 +95,7 @@ if (!$permisos) {
 							</thead>
 							<tbody class="buscar">
 								<?php
+								$modales = '';
 								foreach ($datos_usuarios as $usuario) {
 									$id_user      = $usuario['id_user'];
 									$documento    = $usuario['documento'];
@@ -137,6 +138,7 @@ if (!$permisos) {
 									</tr>
 
 
+									<?php ob_start(); // los modales no pueden ir dentro de <tbody>: el navegador los saca de la tabla y rompe el <form> ?>
 									<!-- Modal -->
 									<div class="modal fade" id="editar<?=$id_user?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 										<div class="modal-dialog modal-lg" role="document">
@@ -248,11 +250,13 @@ if (!$permisos) {
 										</div>
 									</div>
 									<?php
+									$modales .= ob_get_clean();
 								}
 								?>
 							</tbody>
 						</table>
 					</div>
+					<?=$modales?>
 				</div>
 			</div>
 		</div>
