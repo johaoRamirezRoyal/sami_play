@@ -238,7 +238,7 @@ if (isset($_GET['boletin'])) {
 <tr style="text-align: center;">
     <td>
         <br><br>
-        <img src="' . PUBLIC_PATH . 'img/Firmanat.png" width="155"><br>
+    <!-- <img src="' . PUBLIC_PATH . 'img/Firmanat.png" width="155"><br>  -->
         ________________________________<br>
         <span style="font-weight:bold;">COORDINADORA ACADÉMICA</span>
     </td>
